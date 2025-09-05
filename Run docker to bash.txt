@@ -1,0 +1,2 @@
+Run docker to bash
+docker exec -it web-app bash
