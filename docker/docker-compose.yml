@@ -1,0 +1,48 @@
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: "web-app"
+    # depends_on:
+    #   - apache
+    # ports:
+    #   - "8001:80"  # Assuming your web service listens on port 8000
+    restart: always
+    working_dir: /var/www
+    volumes:
+      - ../src:/var/www
+
+  nginx:
+    image: nginx:1.27.2-alpine
+    container_name: "web-server"
+    restart: always
+    ports:
+      - "8000:80"
+    volumes:
+      - ../src:/var/www
+      - ./nginx:/etc/nginx/conf.d
+    
+  db:
+    container_name: "web-db"
+    image: mysql:8.0
+    volumes:
+      - ./storage/mysql:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+
+    # Add the phpMyAdmin service
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: web-phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: root
+    depends_on:
+      - db

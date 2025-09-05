@@ -1,0 +1,24 @@
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: "web_app"
+    depends_on:
+      - apache
+    # ports:
+    #   - "8001:80"  # Assuming your web service listens on port 8000
+    restart: always
+    working_dir: /var/www
+    volumes:
+      - ../src:/var/www
+
+  apache:
+    image: httpd
+    ports:
+      - "8000:80"
+    volumes:
+      - ./apache.conf:/etc/apache2/apache2.conf
+      - ../src:/var/www
+    restart: always
+    container_name: "app_apache"
